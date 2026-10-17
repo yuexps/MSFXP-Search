@@ -5,12 +5,19 @@ import fetchJsonp from "fetch-jsonp";
  * 获取天气
  * https://lbs.amap.com/api/webservice/guide/api/weatherinfo
  */
+// 获取客户端公网 IPv4
+export const getClientIp = async () => {
+  const res = await fetch("https://api-ipv4.ip.sb/jsonip");
+  const { ip } = await res.json();
+  return ip;
+};
+
 // 获取高德地理位置信息
-export const getAdcode = async (key) => {
+export const getAdcode = async (key, ip) => {
   return axios({
     method: "GET",
     url: "https://restapi.amap.com/v3/ip",
-    params: { key },
+    params: { key, ip },
   });
 };
 

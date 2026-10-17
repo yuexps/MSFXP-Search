@@ -55,7 +55,7 @@
 import { getCurrentTime } from "@/utils/timeTools";
 import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 import { statusStore, setStore } from "@/stores";
-import { getAdcode, getWeather } from "@/api";
+import { getClientIp, getAdcode, getWeather } from "@/api";
 
 const set = setStore();
 const status = statusStore();
@@ -89,8 +89,13 @@ const getWeatherData = async () => {
   const timeDifference = currentTime - lastWeatherData.lastFetchTime;
   // 是否超出 5 分钟
   if (timeDifference >= 5 * 60 * 1000) {
-    const adCodeResult = await getAdcode(weatherKey);
-    if (adCodeResult.infocode !== "10000") {
+    const ip = await getClientIp();
+    const adCodeResult = await getAdcode(weatherKey, ip);
+    if (
+      adCodeResult.infocode !== "10000" ||
+      typeof adCodeResult.adcode !== "string" ||
+      !adCodeResult.adcode
+    ) {
       return $message.error("地区查询失败");
     }
     // 获取天气数据
